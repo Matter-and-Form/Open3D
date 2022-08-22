@@ -1,0 +1,12 @@
+[submodule "submodules/Open3D-PoissonRecon"]
+	path = submodules/Open3D-PoissonRecon
+	url = https://github.com/isl-org/Open3D-PoissonRecon.git
+[submodule "submodules/nanoflann"]
+	path = submodules/nanoflann
+	url = https://github.com/jlblancoc/nanoflann.git
+[submodule "submodules/tinyobjloader"]
+	path = submodules/tinyobjloader
+	url = https://github.com/tinyobjloader/tinyobjloader.git
+[submodule "submodules/tinygltf"]
+	path = submodules/tinygltf
+	url = https://github.com/syoyo/tinygltf.git
