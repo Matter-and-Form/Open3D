@@ -1,0 +1,40 @@
+{
+	"folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+		"files.exclude": {
+            // Files in root
+            "CHANGELOG.md": true,
+            "3rdparty": true,
+            "LICENSE": true,
+			"README.md": true,
+            ".codacy.yml": true,
+            ".clang-format": true,
+            ".dockerignore": true,
+            ".gitattributes": true,
+            ".style.yapf": true,
+            // Folders in root
+			"docker": true,
+			"docs": true,
+			"examples": true,
+			"python": true,
+			"util": true,
+			".git": true,
+			".github": true,
+            // Folders in cpp
+			"cpp/apps": true,
+			"cpp/benchmarks": true,
+			"cpp/pybind": true,
+			"cpp/tests": true,
+			"cpp/tools": true,
+            // Folders in cpp/open3d
+			"cpp/open3d/data": true,
+			"cpp/open3d/ml": true,
+			"cpp/open3d/t": true,
+			"cpp/open3d/visualization": true
+		}
+	}
+}
