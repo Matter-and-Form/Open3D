@@ -26,6 +26,11 @@
 
 #include "open3d/utility/ProgressBar.h"
 
+// Avoid conflict with macro I defined in complex.h and in fmt/printf.h
+#ifdef I
+#undef I
+#endif
+
 #include <fmt/printf.h>
 
 #ifdef _OPENMP

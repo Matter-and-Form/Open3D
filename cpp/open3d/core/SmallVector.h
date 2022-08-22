@@ -58,6 +58,11 @@
 #include <type_traits>
 #include <utility>
 
+// Avoid a conflict with the macro I in std::complex
+#ifdef I
+#undef I
+#endif
+
 #ifndef LLVM_LIKELY
 #define LLVM_LIKELY /* [[likely]] */
 #endif

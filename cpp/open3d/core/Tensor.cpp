@@ -50,7 +50,9 @@
 #include "open3d/core/linalg/SVD.h"
 #include "open3d/core/linalg/Solve.h"
 #include "open3d/core/linalg/Tri.h"
+#ifdef USE_NUMPY_IO
 #include "open3d/t/io/NumpyIO.h"
+#endif
 #include "open3d/utility/Logging.h"
 
 namespace open3d {
@@ -1791,11 +1793,19 @@ Tensor Tensor::FromDLPack(const DLManagedTensor* src) {
 }
 
 void Tensor::Save(const std::string& file_name) const {
+#ifdef USE_NUMPY_IO
     t::io::WriteNpy(file_name, *this);
+#else
+    throw std::runtime_error("NumpyIO.h not included.");
+#endif
 }
 
 Tensor Tensor::Load(const std::string& file_name) {
+#ifdef USE_NUMPY_IO
     return t::io::ReadNpy(file_name);
+#else
+    throw std::runtime_error("NumpyIO.h not included.");
+#endif
 }
 
 bool Tensor::AllEqual(const Tensor& other) const {

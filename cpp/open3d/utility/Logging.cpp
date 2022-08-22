@@ -26,6 +26,11 @@
 
 #include "open3d/utility/Logging.h"
 
+// Avoid macro conflict in fmt
+#ifdef I
+#undef I
+#endif
+
 #include <fmt/core.h>
 #include <fmt/printf.h>
 #include <fmt/ranges.h>

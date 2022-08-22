@@ -28,7 +28,9 @@
 
 #include "open3d/core/Tensor.h"
 #include "open3d/core/hashmap/DeviceHashBackend.h"
+#ifdef USE_HASHMAP_IO
 #include "open3d/t/io/HashMapIO.h"
+#endif
 #include "open3d/utility/Helper.h"
 #include "open3d/utility/Logging.h"
 
@@ -94,13 +96,21 @@ void HashSet::GetActiveIndices(Tensor& output_buf_indices) const {
 
 void HashSet::Clear() { internal_->Clear(); }
 
-void HashSet::Save(const std::string& file_name) {
+void HashSet::Save(const std::string& file_name) { 
+#ifdef USE_HASHMAP_IO
     t::io::WriteHashMap(file_name, *internal_);
+#else
+    throw std::runtime_error("HashMapIO.h not included.");
+#endif
 }
 
 HashSet HashSet::Load(const std::string& file_name) {
-    HashMap internal = t::io::ReadHashMap(file_name);
+#ifdef USE_HASHMAP_IO
+     HashMap internal = t::io::ReadHashMap(file_name);
     return HashSet(internal);
+#else
+    throw std::runtime_error("HashMapIO.h not included.");
+#endif
 }
 
 HashSet HashSet::Clone() const {

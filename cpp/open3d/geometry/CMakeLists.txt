@@ -1,42 +1,35 @@
-open3d_ispc_add_library(geometry OBJECT)
-
-target_sources(geometry PRIVATE
-    BoundingVolume.cpp
-    EstimateNormals.cpp
-    Geometry3D.cpp
-    HalfEdgeTriangleMesh.cpp
-    Image.cpp
-    ImageFactory.cpp
-    IntersectionTest.cpp
-    ISSKeypoints.cpp
-    KDTreeFlann.cpp
-    Line3D.cpp
-    LineSet.cpp
-    LineSetFactory.cpp
-    MeshBase.cpp
-    Octree.cpp
-    PointCloud.cpp
-    PointCloudCluster.cpp
-    PointCloudFactory.cpp
-    PointCloudSegmentation.cpp
-    Qhull.cpp
-    RGBDImage.cpp
-    RGBDImageFactory.cpp
-    SurfaceReconstructionAlphaShape.cpp
-    SurfaceReconstructionBallPivoting.cpp
-    SurfaceReconstructionPoisson.cpp
-    TetraMesh.cpp
-    TetraMeshFactory.cpp
-    TriangleMesh.cpp
-    TriangleMeshDeformation.cpp
-    TriangleMeshFactory.cpp
-    TriangleMeshSimplification.cpp
-    TriangleMeshSubdivide.cpp
-    VoxelGrid.cpp
-    VoxelGridFactory.cpp
-)
-
-open3d_show_and_abort_on_warning(geometry)
-open3d_set_global_properties(geometry)
-open3d_set_open3d_lib_properties(geometry)
-open3d_link_3rdparty_libraries(geometry)
+set(geometry_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/BoundingVolume.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/EstimateNormals.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Geometry3D.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/HalfEdgeTriangleMesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Image.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ImageFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/IntersectionTest.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ISSKeypoints.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/KDTreeFlann.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Line3D.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/LineSet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/LineSetFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MeshBase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Octree.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PointCloud.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PointCloudCluster.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PointCloudFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PointCloudSegmentation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Qhull.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RGBDImage.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RGBDImageFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SurfaceReconstructionAlphaShape.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SurfaceReconstructionBallPivoting.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SurfaceReconstructionPoisson.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TetraMesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TetraMeshFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TriangleMesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TriangleMeshDeformation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TriangleMeshFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TriangleMeshSimplification.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/TriangleMeshSubdivide.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/VoxelGrid.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/VoxelGridFactory.cpp
+    PARENT_SCOPE)

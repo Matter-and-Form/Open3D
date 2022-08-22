@@ -30,6 +30,8 @@
 #include "open3d/core/linalg/LinalgHeadersCUDA.h"
 #include "open3d/utility/Logging.h"
 
+using CBLAS_LAYOUT = CBLAS_ORDER;
+
 namespace open3d {
 namespace core {
 
