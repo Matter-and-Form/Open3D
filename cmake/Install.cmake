@@ -8,11 +8,6 @@ set(LIBRARY_RUNTIME_DIR ${CMAKE_INSTALL_BINDIR})
 #set(LIBRARY_DOC_DIR ${CMAKE_INSTALL_DOCDIR})
 #set(LIBRARY_PKGCONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
-# For dependencies to link automatically in projects importing this library,
-# we either need to set the flag -DCMAKE_INSTALL_RPATH='$ORIGIN' when calling
-# cmake or we need to set the property here.
-set_target_properties(${LIBRARY_NAME} PROPERTIES INSTALL_RPATH "$ORIGIN")
-
 # Create CMake config files
 include(CMakePackageConfigHelpers)
 
@@ -30,7 +25,6 @@ write_basic_package_version_file(
 
 # Set install include directories
 target_include_directories(${LIBRARY_NAME} INTERFACE
-    #$<BUILD_INTERFACE:${Open3D_INCLUDE_DIRS}>
     $<INSTALL_INTERFACE:${LIBRARY_INCLUDE_DIR}>
 )
 
@@ -39,7 +33,6 @@ install(TARGETS ${LIBRARY_NAME}
     EXPORT ${LIBRARY_NAME}Targets
     LIBRARY DESTINATION ${LIBRARY_LIBRARY_DIR}
     RUNTIME DESTINATION ${LIBRARY_RUNTIME_DIR}
-    #PUBLIC_HEADER DESTINATION ${LIBRARY_INCLUDE_DIR}
 )
 
 # Install CMake config files
@@ -51,9 +44,6 @@ install(FILES
 install(EXPORT ${LIBRARY_NAME}Targets
    NAMESPACE ${LIBRARY_NAME}::
    DESTINATION ${LIBRARY_CMAKE_DIR})
-
-# This seems to have no effect
-# export(TARGETS ${LIBRARY_NAME} FILE ${LIBRARY_NAME}Targets.cmake)
 
 # Install public API
 

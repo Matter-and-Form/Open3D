@@ -1,5 +1,5 @@
 [submodule "submodules/Open3D-PoissonRecon"]
-	path = submodules/Open3D-PoissonRecon
+	path = submodules/PoissonRecon
 	url = https://github.com/isl-org/Open3D-PoissonRecon.git
 [submodule "submodules/nanoflann"]
 	path = submodules/nanoflann

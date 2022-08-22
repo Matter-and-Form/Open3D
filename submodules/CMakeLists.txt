@@ -1,0 +1,6 @@
+set(submodules_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/nanoflann/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/tinyobjloader
+    ${CMAKE_CURRENT_SOURCE_DIR}/tinygltf
+	PARENT_SCOPE)

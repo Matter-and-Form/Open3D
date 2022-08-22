@@ -6,6 +6,20 @@ project(Open3D VERSION 0.15.2 DESCRIPTION "Open3D Library.")
 option(BUILD_SHARED_LIBS "Build Open3D as a shared library." ON)
 option(OPEN3D_IS_SUBDIRECTORY "Build Open3D as a subdirectory in another project." OFF)
 
+if(BUILD_SHARED_LIBS)
+    set(LIBRARY_TYPE SHARED)
+else()
+    set(LIBRARY_TYPE STATIC)
+endif()
+
+if(OPEN3D_IS_SUBDIRECTORY)
+    # Must be PUBLIC if the library is added as a subdirectory in another project.
+    set(LIBRARY_ACCESS PUBLIC)
+else()
+    # Must be PRIVATE to install and export the library
+    set(LIBRARY_ACCESS PRIVATE)
+endif()
+
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -36,37 +50,22 @@ find_package(liblzf REQUIRED)
 
 # Add subdirectories
 add_subdirectory(cpp/open3d)
-
-# Set the library (target) name to the project name
-set(LIBRARY_NAME ${PROJECT_NAME})
-
-if(BUILD_SHARED_LIBS)
-    set(LIBRARY_TYPE SHARED)
-else()
-    set(LIBRARY_TYPE STATIC)
-endif()
-
-if(OPEN3D_IS_SUBDIRECTORY)
-    # Must be PUBLIC if the library is added as a subdirectory in another project.
-    set(LIBRARY_ACCESS PUBLIC)
-else()
-    # Must be PRIVATE to install and export the library
-    set(LIBRARY_ACCESS PRIVATE)
-endif()
+add_subdirectory(submodules)
+add_subdirectory(3rdparty)
 
 # Add the library
-add_library(${LIBRARY_NAME} ${LIBRARY_TYPE} ${Open3D_SOURCES})
+set(LIBRARY_NAME ${PROJECT_NAME})
+add_library(${LIBRARY_NAME} ${LIBRARY_TYPE}
+    ${open3d_SOURCES}
+    ${3rdparty_SOURCES})
 
-# Set the library version
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-
-if(BUILD_SHARED_LIBS)
-    # Set .so major version so that libOpen3D.so.0 will be a symlink to libOpen3D.so.0.15.2
-    set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
-endif()
+message(NOTICE "submodules_INCLUDE_DIRS: ${submodules_INCLUDE_DIRS}")
 
 # Set target include directories
-target_include_directories(${LIBRARY_NAME} ${LIBRARY_ACCESS} ${Open3D_INCLUDE_DIRS})
+target_include_directories(${LIBRARY_NAME} ${LIBRARY_ACCESS} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+    ${submodules_INCLUDE_DIRS}
+    ${3rdparty_INCLUDE_DIRS})
 
 # Set target link libraries
 target_link_libraries(${LIBRARY_NAME} 
@@ -113,11 +112,19 @@ endif()
 
 target_compile_options(${LIBRARY_NAME} ${LIBRARY_ACCESS} ${OPEN3D_COMPILE_OPTIONS})
 
+# Set the library version
+set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+
+if(BUILD_SHARED_LIBS)
+    # Set .so major version so that libOpen3D.so.0 will be a symlink to libOpen3D.so.0.15.2
+    set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+endif()
+
 # Do not setup install/uninstall if the library is built as a subdirectory in another project
 if(NOT OPEN3D_IS_SUBDIRECTORY)
     # Install and export
-    include(cmake-minimal/Install.cmake)
+    include(cmake/Install.cmake)
 
     # Uninstall
-    include(cmake-minimal/Uninstall.cmake)
+    include(cmake/Uninstall.cmake)
 endif()
