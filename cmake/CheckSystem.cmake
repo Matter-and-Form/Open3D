@@ -39,23 +39,3 @@ elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL x86_64)
 else()
     message(FATAL_ERROR "Architecture ${CMAKE_SYSTEM_PROCESSOR} is not supported.")
 endif()
-
-# Set the dependencies path for this os and architecture
-set(DEPENDENCIES_PATH dependencies/${OS_NAME}/${CMAKE_SYSTEM_PROCESSOR})
-
-# Set the path for Open3D depencencies
-set(OPEN3D_DEPENDENCIES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${DEPENDENCIES_PATH})
-
-# Set the path for MFLib dependencies (Eigen3, Assimp)
-get_filename_component(MFLIB_DEPENDENCIES_PATH ${CMAKE_CURRENT_LIST_DIR}/../../MFLib/${DEPENDENCIES_PATH} ABSOLUTE)
-
-# Set compiler options
-# set(OPEN3D_COMPILE_OPTIONS)
-
-if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL armv7l)
-     # Additional compiler options for armv7l
-     list(APPEND OPEN3D_COMPILE_OPTIONS -Wno-psabi -mcpu=cortex-a72 -mfpu=neon-vfpv4)
-elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL aarch64)
-     # Additional compiler options for aarch64
-     list(APPEND OPEN3D_COMPILE_OPTIONS -Wno-psabi)
-endif()

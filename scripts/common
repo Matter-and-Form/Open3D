@@ -1,0 +1,180 @@
+#!/bin/bash
+
+# Check operating system
+if [[ ${OSTYPE} == linux-gnu* ]]; then
+    # Linux
+    OS_NAME="linux"
+
+    # Check architecture
+    ARCHITECTURE=$(uname -m)
+    if [[ ${ARCHITECTURE} == x86_64 ]]; then
+        # x86_64
+        :
+    elif [[ ${ARCHITECTURE} == armv7l ]]; then
+        # ARM 32-bit
+        :
+    elif [[ ${ARCHITECTURE} == aarch64 ]]; then
+        # ARM 64-bit
+        :
+    else
+        # Unsuported architecture.
+        echo "The architecture ${ARCHITECTURE} is not supported."
+        exit 1
+    fi
+
+    NUMBER_OF_CORES=$(grep -c processor /proc/cpuinfo)
+
+    if grep -q 'ubuntu' /etc/os-release; then
+        OS_VERSION=$(grep -oP 'VERSION_ID="\K[^"]+' /etc/os-release)
+        OS_NAME="ubuntu-${OS_VERSION}"
+        
+    elif grep -q 'buster' /etc/os-release; then
+        # Raspberry Pi buster.  Only use one core.
+        OS_NAME="raspbian-10"
+        #NUMBER_OF_CORES=1
+    elif grep -q 'bullseye' /etc/os-release; then
+        # Raspberry Pi bullseye.  Only use one core.
+        OS_NAME="raspbian-11"
+        #NUMBER_OF_CORES=1
+    else
+        # Unsuported Raspberry Pi OS version.
+        echo "The Raspberry Pi OS version is not supported."
+        exit 1
+    fi
+
+    # Check if running as root
+    if [ ${EUID} -eq 0 ]; then
+        # Running as root, sudo is not available.
+        SUDO=""
+    else
+        # Running as a user, sudo is required.
+        SUDO="sudo"
+    fi
+
+    UPDATE_COMMAND="${SUDO} apt update"
+    INSTALL_COMMAND="${SUDO} apt install -y --no-install-recommends"
+else
+    # Unsuported operating system.
+    echo "The operating system ${OSTYPE} is not supported."
+    exit 1
+fi
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+COMMON_DEPENDENCIES_PATH="$(realpath ${SCRIPT_PATH}/../dependencies)"
+COMMON_SOURCE_PATH="${COMMON_DEPENDENCIES_PATH}/source"
+COMMON_BUILD_PATH="${COMMON_DEPENDENCIES_PATH}/build"
+COMMON_INSTALL_PATH="${COMMON_DEPENDENCIES_PATH}/${OS_NAME}/${ARCHITECTURE}"
+COMMON_REQUIRED_PACKAGES="gcc g++ make cmake git ca-certificates"
+
+FindLibrary()
+{
+    LIBRARY_PATH=$1
+    LIBRARY_NAME=$2
+    if [ -d ${LIBRARY_PATH} ] && [ "$(ls -A ${LIBRARY_PATH})" ]; then
+        echo ""
+        echo "Found ${LIBRARY_NAME} in ${LIBRARY_PATH}"
+        read -p "Do you want to rebuild ${LIBRARY_NAME}? (y/n) " CHOICE
+        if [[ ${CHOICE} == 'y' ]]; then
+            echo "rm -rf ${LIBRARY_PATH}"
+            rm -rf ${LIBRARY_PATH}
+        else
+            return 1
+        fi
+    fi
+    return 0
+}
+
+InstallPackages()
+{
+    if [ $# -eq 0 ]; then
+        #echo "No arguments, nothing to do."
+        return 0
+    fi
+
+    echo "${UPDATE_COMMAND}"
+    ${UPDATE_COMMAND}
+
+    for PACKAGE in "${@}"; do 
+        echo "${INSTALL_COMMAND} ${PACKAGE}"
+        ${INSTALL_COMMAND} ${PACKAGE}
+
+        # Check if install failed
+        if [ $? -ne 0 ]; then 
+            exit 1
+        fi
+    done
+}
+
+GitClone()
+{
+    if [ $# -lt 2 ]; then
+        echo "A source directory and a URL are required to clone a git repository."
+        exit 1
+    fi
+
+    SOURCE_PATH=$1
+    URL=$2
+    BRANCH=$3
+
+    # Check the source directory exists and is not empty
+    if [ -d ${SOURCE_PATH} ] && [ "$(ls -A ${SOURCE_PATH})" ]; then
+        echo ""
+        echo "The source directory ${SOURCE_PATH} already exists."
+        read -p "Do you want to re-clone the repository? (y/n) " CHOICE
+        if [[ ${CHOICE} == 'y' ]]; then
+            echo "rm -rf ${SOURCE_PATH}"
+            rm -rf ${SOURCE_PATH}
+        else
+            return 0
+        fi
+    fi
+
+    # Clone the git repository
+    echo "git clone --depth 1 --branch ${BRANCH} ${URL} ${SOURCE_PATH}"
+    git clone --depth 1 --branch ${BRANCH} ${URL} ${SOURCE_PATH}
+
+    # Check if git clone failed
+    if [ $? -ne 0 ]; then 
+        exit 1
+    fi
+}
+
+BuildAndInstall()
+{
+    if [ $# -lt 2 ]; then
+        echo "A source path and a build path are required to build the library."
+        exit 1
+    fi
+
+    SOURCE_PATH=$1
+    BUILD_PATH=$2
+    CMAKE_FLAGS="${@:3}"
+
+    # Check the build directory exists and is not empty
+    if [ -d ${BUILD_PATH} ] && [ "$(ls -A ${BUILD_PATH})" ]; then
+        echo ""
+        echo "The build directory ${BUILD_PATH} already exists."
+        read -p "Do you want to remove it for a clean rebuild? (y/n) " CHOICE
+        if [[ ${CHOICE} == 'y' ]]; then
+            echo "rm -rf ${BUILD_PATH}"
+            rm -rf ${BUILD_PATH}
+        fi
+    fi
+
+    CMAKE_CONFIGURE="cmake -H${SOURCE_PATH} -B${BUILD_PATH} ${CMAKE_FLAGS}"
+    CMAKE_BUILD_INSTALL="cmake --build ${BUILD_PATH} --target install -j ${NUMBER_OF_CORES}"
+
+    echo $CMAKE_CONFIGURE
+    ${CMAKE_CONFIGURE}
+    if [ $? -ne 0 ]; then
+        #echo "CMake configuration failed."
+        exit 1
+    fi
+
+    echo $CMAKE_BUILD_INSTALL
+    ${CMAKE_BUILD_INSTALL}
+    if [ $? -ne 0 ]; then
+        #echo "Cmake build and install failed."
+        exit 1
+    fi
+}

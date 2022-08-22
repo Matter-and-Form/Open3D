@@ -1,0 +1,51 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+ASSIMP_NAME=assimp
+ASSIMP_URL=https://github.com/assimp/assimp.git
+ASSIMP_BRANCH=v5.1.5
+ASSIMP_SOURCE_PATH=${COMMON_SOURCE_PATH}/${ASSIMP_NAME}
+ASSIMP_BUILD_PATH=${COMMON_BUILD_PATH}/${ASSIMP_NAME}
+ASSIMP_INSTALL_PATH=${COMMON_INSTALL_PATH}/${ASSIMP_NAME}
+ASSIMP_DEPENDENCIES="zlib1g-dev"
+ASSIMP_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${ASSIMP_INSTALL_PATH}
+    -DCMAKE_INSTALL_RPATH='$ORIGIN'
+    -DCMAKE_BUILD_TYPE=Release
+    -DASSIMP_BUILD_TESTS=OFF
+    -DASSIMP_BUILD_ASSIMP_TOOLS=OFF)
+    
+if [[ ${ARCHITECTURE} == armv7l ]]; then
+    # When compiling on ARM suppress warnings of the type
+    # "parameter passing for argument of type <some type> changed in GCC 7.1"
+    CERES_FLAGS+=(-DCMAKE_CXX_FLAGS='-Wno-psabi')
+fi
+
+# Skip if the library is already installed
+FindLibrary ${ASSIMP_INSTALL_PATH} Assimp
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                      Build Assimp                         *"
+echo "*************************************************************"
+echo ""
+
+InstallPackages ${COMMON_REQUIRED_PACKAGES} ${ASSIMP_DEPENDENCIES}
+GitClone ${ASSIMP_SOURCE_PATH} ${ASSIMP_URL} ${ASSIMP_BRANCH}
+BuildAndInstall ${ASSIMP_SOURCE_PATH} ${ASSIMP_BUILD_PATH} ${ASSIMP_FLAGS[@]}
+
+# The pkgconfig directory contains information about the build machine, and it is not needed.
+rm -rf ${ASSIMP_INSTALL_PATH}/lib/pkgconfig
+
+echo ""
+echo "*************************************************************"
+echo "*                  Build Assimp successful                  *"
+echo "*************************************************************"
+echo ""

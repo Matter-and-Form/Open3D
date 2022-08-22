@@ -10,14 +10,17 @@ option(OPEN3D_IS_SUBDIRECTORY "Build Open3D as a subdirectory in another project
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Include Open3D definitions
-include(cmake-minimal/Definitions.cmake)
+# Check the OS, OS version and architecture
+include(cmake/CheckSystem.cmake)
+
+# Set the path for Open3D depencencies
+set(OPEN3D_DEPENDENCIES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${OS_NAME}/${CMAKE_SYSTEM_PROCESSOR})
 
 # Find dependency packages
 
 # Built shared libraries
-find_package(assimp 5.1 REQUIRED PATHS ${MFLIB_DEPENDENCIES_PATH}/assimp NO_DEFAULT_PATH)
-find_package(Eigen3 3.4 REQUIRED PATHS ${MFLIB_DEPENDENCIES_PATH}/eigen NO_DEFAULT_PATH)
+find_package(assimp 5.1 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/assimp NO_DEFAULT_PATH)
+find_package(Eigen3 3.4 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/eigen NO_DEFAULT_PATH)
 
 # Built static libraries
 find_package(jsoncpp 1.5 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/jsoncpp NO_DEFAULT_PATH)
@@ -32,9 +35,9 @@ find_package(PNG REQUIRED)
 find_package(liblzf REQUIRED)
 
 # Add subdirectories
-add_subdirectory(open3d)
+add_subdirectory(cpp/open3d)
 
-# Make the library (target) name the project name
+# Set the library (target) name to the project name
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 if(BUILD_SHARED_LIBS)
@@ -59,7 +62,7 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
 if(BUILD_SHARED_LIBS)
     # Set .so major version so that libOpen3D.so.0 will be a symlink to libOpen3D.so.0.15.2
-    set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION 0)
+    set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 endif()
 
 # Set target include directories
@@ -88,7 +91,7 @@ target_link_libraries(${LIBRARY_NAME}
     Eigen3::Eigen
     assimp::assimp)
 
-# Set target compile defintions (see Definitions.cmake)
+# Set target compile defintions
 target_compile_definitions(${LIBRARY_NAME} ${LIBRARY_ACCESS}
     # BLAS library (instead of MKL)
     USE_BLAS
@@ -97,7 +100,17 @@ target_compile_definitions(${LIBRARY_NAME} ${LIBRARY_ACCESS}
     # Enable implementation for tinygltf
     TINYGLTF_IMPLEMENTATION STB_IMAGE_IMPLEMENTATION STB_IMAGE_WRITE_IMPLEMENTATION)
 
-# Set target compile options (see Definitions.cmake)
+# Set target compile options
+set(OPEN3D_COMPILE_OPTIONS)
+
+if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL armv7l)
+     # Additional compiler options for armv7l
+     list(APPEND OPEN3D_COMPILE_OPTIONS -Wno-psabi -mcpu=cortex-a72 -mfpu=neon-vfpv4)
+elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL aarch64)
+     # Additional compiler options for aarch64
+     list(APPEND OPEN3D_COMPILE_OPTIONS -Wno-psabi)
+endif()
+
 target_compile_options(${LIBRARY_NAME} ${LIBRARY_ACCESS} ${OPEN3D_COMPILE_OPTIONS})
 
 # Do not setup install/uninstall if the library is built as a subdirectory in another project

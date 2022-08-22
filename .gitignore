@@ -90,3 +90,6 @@ docs/Doxyfile
 docs/getting_started.rst
 docs/docker.rst
 docs/tensorboard.md
+
+# Dependencies built locally using the build scripts
+dependencies
