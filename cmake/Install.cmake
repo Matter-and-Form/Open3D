@@ -6,7 +6,6 @@ set(LIBRARY_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR})
 set(LIBRARY_LIBRARY_DIR ${CMAKE_INSTALL_LIBDIR})
 set(LIBRARY_RUNTIME_DIR ${CMAKE_INSTALL_BINDIR})
 #set(LIBRARY_DOC_DIR ${CMAKE_INSTALL_DOCDIR})
-#set(LIBRARY_PKGCONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # Create CMake config files
 include(CMakePackageConfigHelpers)
@@ -47,40 +46,49 @@ install(EXPORT ${LIBRARY_NAME}Targets
 
 # Install public API
 
-# Option 1: There is a single pulbic header
-#set_target_properties(${LIBRARY_NAME} PROPERTIES PUBLIC_HEADER source/Open3D.hpp)
+set(open3d_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/open3d)
+set(open3d_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/cpp/open3d)
 
-# Option 2: Install files explicitly
-#install(FILES source/Open3D.hpp ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}Version.hpp DESTINATION ${LIBRARY_INCLUDE_DIR})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/open3d/Macro.h DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d)
+# Configure the top-level header files
+configure_file(${open3d_SOURCE_DIR}/Open3D.h.in ${open3d_BINARY_DIR}/Open3D.h)
+configure_file(${open3d_SOURCE_DIR}/Open3DConfig.h.in ${open3d_BINARY_DIR}/Open3DConfig.h)
 
-# Option 3: Install all header files in the source directory
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/open3d/camera
+# Install the top-level header files
+install(FILES 
+    ${open3d_BINARY_DIR}/Open3D.h 
+    ${open3d_BINARY_DIR}/Open3DConfig.h
+    ${open3d_SOURCE_DIR}/Macro.h
+    DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d)
+
+# Install all header files in cpp/open3d/camera
+install(DIRECTORY ${open3d_SOURCE_DIR}/camera
     DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d
     FILES_MATCHING PATTERN "*.h")
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/open3d/core
+# Install all header files in cpp/open3d/core
+install(DIRECTORY ${open3d_SOURCE_DIR}/core
     DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d
     FILES_MATCHING PATTERN "*.h")
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/open3d/geometry
+# Install all header files in cpp/open3d/geometry
+install(DIRECTORY ${open3d_SOURCE_DIR}/geometry
     DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d
     FILES_MATCHING PATTERN "*.h")
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/open3d/io
+# Install all header files in cpp/open3d/io
+install(DIRECTORY ${open3d_SOURCE_DIR}/io
     DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d
     FILES_MATCHING PATTERN "*.h")
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/open3d/pipelines
+# Install all header files in cpp/open3d/pipelines
+install(DIRECTORY ${open3d_SOURCE_DIR}/pipelines
     DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d
     FILES_MATCHING PATTERN "*.h")
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/open3d/utility
+# Install all header files in cpp/open3d/utility
+install(DIRECTORY ${open3d_SOURCE_DIR}/utility
     DESTINATION ${LIBRARY_INCLUDE_DIR}/open3d
     FILES_MATCHING PATTERN "*.h")
 
 # Install licence file
 #install(FILES LICENSE DESTINATION ${LIBRARY_DOC_DIR})
-
-# Install pkg-config file
-#install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_NAME}.pc" DESTINATION ${LIBRARY_PKGCONFIG_DIR})

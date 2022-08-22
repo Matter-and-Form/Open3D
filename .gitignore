@@ -93,3 +93,6 @@ docs/tensorboard.md
 
 # Dependencies built locally using the build scripts
 dependencies
+
+# Local install directories
+install
