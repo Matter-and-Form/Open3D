@@ -6,7 +6,7 @@ SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null &&
 source ${SCRIPT_PATH}/common
 
 QHULL_NAME=qhull
-QHULL_URL=git@github.com:qhull/qhull.git
+QHULL_URL=https://github.com/qhull/qhull.git
 QHULL_BRANCH=v8.0.2
 QHULL_SOURCE_PATH=${COMMON_SOURCE_PATH}/${QHULL_NAME}
 QHULL_BUILD_PATH=${COMMON_BUILD_PATH}/${QHULL_NAME}

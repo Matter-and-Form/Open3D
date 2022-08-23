@@ -30,6 +30,14 @@ include(cmake/CheckSystem.cmake)
 # Set the path for Open3D depencencies
 set(OPEN3D_DEPENDENCIES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${OS_NAME}/${CMAKE_SYSTEM_PROCESSOR})
 
+# Check if the dependencies path exists.
+# If it does not exist, run 'scripts/build-dependencies' before running cmake.
+get_filename_component(_fullpath "${_dir}" REALPATH)
+if (NOT EXISTS "${OPEN3D_DEPENDENCIES_PATH}")
+    message(FATAL_ERROR "The Open3D dependencies path [${OPEN3D_DEPENDENCIES_PATH}] does not exist.  Run 'scripts/build-dependencies' to build the dependencies and run cmake again.")
+endif()
+
+
 # Find dependency packages
 
 # Built shared libraries
@@ -41,12 +49,14 @@ find_package(jsoncpp 1.5 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/jsoncpp NO_D
 find_package(Qhull 8.0 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/qhull NO_DEFAULT_PATH)
 
 # Apt packages
+# If any of these packages do not exist, run 'scripts/install-required-packages' before running cmake.
 find_package(fmt REQUIRED)
 find_package(TBB REQUIRED)
-find_package(BLAS REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(liblzf REQUIRED)
+find_package(BLAS REQUIRED)
+
 
 # Add subdirectories
 add_subdirectory(cpp/open3d)
@@ -58,8 +68,6 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 add_library(${LIBRARY_NAME} ${LIBRARY_TYPE}
     ${open3d_SOURCES}
     ${3rdparty_SOURCES})
-
-message(NOTICE "submodules_INCLUDE_DIRS: ${submodules_INCLUDE_DIRS}")
 
 # Set target include directories
 target_include_directories(${LIBRARY_NAME} ${LIBRARY_ACCESS} 
@@ -76,19 +84,20 @@ target_link_libraries(${LIBRARY_NAME}
     # Apt packages
     fmt::fmt
     TBB::tbb
-    BLAS::BLAS
     JPEG::JPEG
     PNG::PNG
     liblzf::liblzf
+    openblas
     lapacke
+    
     # Built static libraries
     JsonCpp::JsonCpp
     Qhull::qhullcpp
     Qhull::qhullstatic_r
     # Built shared libraries
     PUBLIC
-    Eigen3::Eigen
-    assimp::assimp)
+    assimp::assimp
+    Eigen3::Eigen)
 
 # Set target compile defintions
 target_compile_definitions(${LIBRARY_NAME} ${LIBRARY_ACCESS}
