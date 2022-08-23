@@ -1,71 +1,5 @@
 #!/bin/bash
 
-# Check operating system
-if [[ ${OSTYPE} == linux-gnu* ]]; then
-    # Linux
-    OS_NAME="linux"
-
-    # Check architecture
-    ARCHITECTURE=$(uname -m)
-    if [[ ${ARCHITECTURE} == x86_64 ]]; then
-        # x86_64
-        :
-    elif [[ ${ARCHITECTURE} == armv7l ]]; then
-        # ARM 32-bit
-        :
-    elif [[ ${ARCHITECTURE} == aarch64 ]]; then
-        # ARM 64-bit
-        :
-    else
-        # Unsuported architecture.
-        echo "The architecture ${ARCHITECTURE} is not supported."
-        exit 1
-    fi
-
-    NUMBER_OF_CORES=$(grep -c processor /proc/cpuinfo)
-
-    if grep -q 'ubuntu' /etc/os-release; then
-        OS_VERSION=$(grep -oP 'VERSION_ID="\K[^"]+' /etc/os-release)
-        OS_NAME="ubuntu-${OS_VERSION}"
-        
-    elif grep -q 'buster' /etc/os-release; then
-        # Raspberry Pi buster.  Only use one core.
-        OS_NAME="raspbian-10"
-        #NUMBER_OF_CORES=1
-    elif grep -q 'bullseye' /etc/os-release; then
-        # Raspberry Pi bullseye.  Only use one core.
-        OS_NAME="raspbian-11"
-        #NUMBER_OF_CORES=1
-    else
-        # Unsuported Raspberry Pi OS version.
-        echo "The Raspberry Pi OS version is not supported."
-        exit 1
-    fi
-
-    # Check if running as root
-    if [ ${EUID} -eq 0 ]; then
-        # Running as root, sudo is not available.
-        SUDO=""
-    else
-        # Running as a user, sudo is required.
-        SUDO="sudo"
-    fi
-
-    UPDATE_COMMAND="${SUDO} apt update"
-    INSTALL_COMMAND="${SUDO} apt install -y --no-install-recommends"
-else
-    # Unsuported operating system.
-    echo "The operating system ${OSTYPE} is not supported."
-    exit 1
-fi
-
-SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
-COMMON_DEPENDENCIES_PATH="$(realpath ${SCRIPT_PATH}/../dependencies)"
-COMMON_SOURCE_PATH="${COMMON_DEPENDENCIES_PATH}/source"
-COMMON_BUILD_PATH="${COMMON_DEPENDENCIES_PATH}/build"
-COMMON_INSTALL_PATH="${COMMON_DEPENDENCIES_PATH}/${OS_NAME}/${ARCHITECTURE}"
-COMMON_REQUIRED_PACKAGES="gcc g++ make cmake git ca-certificates"
-
 FindLibrary()
 {
     LIBRARY_PATH=$1
@@ -178,3 +112,73 @@ BuildAndInstall()
         exit 1
     fi
 }
+
+CheckSystem()
+{
+    if [[ ${OSTYPE} == linux-gnu* ]]; then
+        # Linux
+        OS_NAME="linux"
+
+        # Check architecture
+        ARCHITECTURE=$(uname -m)
+        if [[ ${ARCHITECTURE} == x86_64 ]]; then
+            # x86_64
+            :
+        elif [[ ${ARCHITECTURE} == armv7l ]]; then
+            # ARM 32-bit
+            :
+        elif [[ ${ARCHITECTURE} == aarch64 ]]; then
+            # ARM 64-bit
+            :
+        else
+            # Unsuported architecture.
+            echo "The architecture ${ARCHITECTURE} is not supported."
+            exit 1
+        fi
+
+        NUMBER_OF_CORES=$(grep -c processor /proc/cpuinfo)
+
+        if grep -q 'ubuntu' /etc/os-release; then
+            OS_VERSION=$(grep -oP 'VERSION_ID="\K[^"]+' /etc/os-release)
+            OS_NAME="ubuntu-${OS_VERSION}"
+            
+        elif grep -q 'buster' /etc/os-release; then
+            # Raspberry Pi buster.  Only use one core.
+            OS_NAME="raspbian-10"
+        elif grep -q 'bullseye' /etc/os-release; then
+            # Raspberry Pi bullseye.  Only use one core.
+            OS_NAME="raspbian-11"
+        else
+            # Unsuported Raspberry Pi OS version.
+            echo "The Raspberry Pi OS version is not supported."
+            exit 1
+        fi
+
+        # Check if running as root
+        if [ ${EUID} -eq 0 ]; then
+            # Running as root, sudo is not available.
+            SUDO=""
+        else
+            # Running as a user, sudo is required.
+            SUDO="sudo"
+        fi
+
+        UPDATE_COMMAND="${SUDO} apt update"
+        INSTALL_COMMAND="${SUDO} apt install -y --no-install-recommends"
+    else
+        # Unsuported operating system.
+        echo "The operating system ${OSTYPE} is not supported."
+        exit 1
+    fi
+}
+
+# Check the OS and architecture
+CheckSystem
+
+# Set common source, build and install paths
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+COMMON_DEPENDENCIES_PATH="$(realpath ${SCRIPT_PATH}/../dependencies)"
+COMMON_SOURCE_PATH="${COMMON_DEPENDENCIES_PATH}/source"
+COMMON_BUILD_PATH="${COMMON_DEPENDENCIES_PATH}/build"
+COMMON_INSTALL_PATH="${COMMON_DEPENDENCIES_PATH}/${OS_NAME}/${ARCHITECTURE}"
+COMMON_REQUIRED_PACKAGES="gcc g++ make cmake git ca-certificates"

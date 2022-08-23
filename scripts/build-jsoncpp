@@ -40,10 +40,7 @@ echo ""
 InstallPackages ${COMMON_REQUIRED_PACKAGES} ${JSONCPP_DEPENDENCIES}
 GitClone ${JSONCPP_SOURCE_PATH} ${JSONCPP_URL} ${JSONCPP_BRANCH}
 BuildAndInstall ${JSONCPP_SOURCE_PATH} ${JSONCPP_BUILD_PATH} ${JSONCPP_FLAGS[@]}
-ScrubLibraries ${JSONCPP_INSTALL_PATH}/lib
 
-# The pkgconfig directory contains information about the build machine, and it is not needed.
-#rm -rf ${JSONCPP_INSTALL_PATH}/lib/pkgconfig
 
 echo ""
 echo "*************************************************************"

@@ -34,7 +34,6 @@ echo ""
 InstallPackages ${COMMON_REQUIRED_PACKAGES} ${EIGEN_DEPENDENCIES}
 GitClone ${EIGEN_SOURCE_PATH} ${EIGEN_URL} ${EIGEN_BRANCH}
 BuildAndInstall ${EIGEN_SOURCE_PATH} ${EIGEN_BUILD_PATH} ${EIGEN_FLAGS[@]}
-ScrubLibraries ${EIGEN_INSTALL_PATH}/lib
 
 echo ""
 echo "*************************************************************"

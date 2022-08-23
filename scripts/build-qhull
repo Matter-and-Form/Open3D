@@ -35,7 +35,6 @@ echo ""
 InstallPackages ${COMMON_REQUIRED_PACKAGES} ${QHULL_DEPENDENCIES}
 GitClone ${QHULL_SOURCE_PATH} ${QHULL_URL} ${QHULL_BRANCH}
 BuildAndInstall ${QHULL_SOURCE_PATH} ${QHULL_BUILD_PATH} ${QHULL_FLAGS[@]}
-ScrubLibraries ${QHULL_INSTALL_PATH}/lib
 
 # The pkgconfig directory contains information about the build machine, and it is not needed.
 rm -rf ${QHULL_INSTALL_PATH}/lib/pkgconfig

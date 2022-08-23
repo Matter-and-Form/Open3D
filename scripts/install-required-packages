@@ -1,0 +1,17 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get InstallPackages function.
+source ${SCRIPT_PATH}/common
+
+packages=(
+    # Common packages
+    ${COMMON_REQUIRED_PACKAGES}
+    # Eigen
+    libsuitesparse-dev libsuperlu-dev
+    # Assimp
+    zlib1g-dev)
+
+# Install required packages
+InstallPackages ${packages[@]}
