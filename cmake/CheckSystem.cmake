@@ -1,4 +1,4 @@
-# Check operating system
+# Check operating system.  Only Linux is supported
 if (${CMAKE_SYSTEM_NAME} STREQUAL Linux)
     # Linux
 else()

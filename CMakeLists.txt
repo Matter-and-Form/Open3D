@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.16.0)
 
+# Check operating system.  Only Linux is supported 
+if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL Linux)
+    message(FATAL_ERROR "Operating system ${CMAKE_SYSTEM_NAME} is not supported.")
+endif()
+
 project(Open3D VERSION 0.15.2 DESCRIPTION "Open3D Library.")
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Build options
 option(BUILD_SHARED_LIBS "Build Open3D as a shared library." ON)
@@ -20,15 +29,8 @@ else()
     set(LIBRARY_ACCESS PRIVATE)
 endif()
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# Check the OS, OS version and architecture
-include(cmake/CheckSystem.cmake)
-
 # Set the path for Open3D depencencies
-set(OPEN3D_DEPENDENCIES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${OS_NAME}/${CMAKE_SYSTEM_PROCESSOR})
+set(OPEN3D_DEPENDENCIES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/install)
 
 # Check if the dependencies path exists.
 # If it does not exist, run 'scripts/build-dependencies' before running cmake.
@@ -56,7 +58,6 @@ find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(liblzf REQUIRED)
 find_package(BLAS REQUIRED)
-
 
 # Add subdirectories
 add_subdirectory(cpp/open3d)

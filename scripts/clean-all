@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+OPEN3D_PATH="$(realpath ${SCRIPT_PATH}/..)"
+
+rm -rf ${OPEN3D_PATH}/dependencies
+rm -rf ${OPEN3D_PATH}/build
+rm -rf ${OPEN3D_PATH}/install

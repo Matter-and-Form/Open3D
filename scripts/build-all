@@ -7,3 +7,6 @@ ${SCRIPT_PATH}/build-assimp
 ${SCRIPT_PATH}/build-eigen
 ${SCRIPT_PATH}/build-jsoncpp
 ${SCRIPT_PATH}/build-qhull
+
+# Build Open3D
+${SCRIPT_PATH}/build-open3d
