@@ -21,7 +21,7 @@ ASSIMP_FLAGS=(
 if [[ ${ARCHITECTURE} == armv7l ]]; then
     # When compiling on ARM suppress warnings of the type
     # "parameter passing for argument of type <some type> changed in GCC 7.1"
-    CERES_FLAGS+=(-DCMAKE_CXX_FLAGS='-Wno-psabi')
+    ASSIMP_FLAGS+=(-DCMAKE_CXX_FLAGS='-Wno-psabi')
 fi
 
 # Skip if the library is already installed

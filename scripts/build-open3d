@@ -1,0 +1,41 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+OPEN3D_SOURCE_PATH="$(realpath ${SCRIPT_PATH}/..)"
+OPEN3D_BUILD_PATH=${OPEN3D_SOURCE_PATH}/build
+OPEN3D_INSTALL_PATH=${OPEN3D_SOURCE_PATH}/install
+OPEN3D_DEPENDENCIES="libfmt-dev libtbb-dev libjpeg-dev libpng-dev liblzf-dev libopenblas-dev liblapacke-dev"
+OPEN3D_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${OPEN3D_INSTALL_PATH}
+    -DCMAKE_BUILD_TYPE=Release)
+    
+if [[ ${ARCHITECTURE} == armv7l ]]; then
+    # When compiling on ARM suppress warnings of the type
+    # "parameter passing for argument of type <some type> changed in GCC 7.1"
+    OPEN3D_FLAGS+=(-DCMAKE_CXX_FLAGS='-Wno-psabi')
+fi
+
+# Skip if the library is already installed
+FindLibrary ${OPEN3D_INSTALL_PATH} Open3D
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                      Build Open3D                         *"
+echo "*************************************************************"
+echo ""
+
+InstallPackages ${COMMON_REQUIRED_PACKAGES} ${OPEN3D_DEPENDENCIES}
+BuildAndInstall ${OPEN3D_SOURCE_PATH} ${OPEN3D_BUILD_PATH} ${OPEN3D_FLAGS[@]}
+
+echo ""
+echo "*************************************************************"
+echo "*                  Build Open3D successful                  *"
+echo "*************************************************************"
+echo ""
