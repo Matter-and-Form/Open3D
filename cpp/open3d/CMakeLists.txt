@@ -6,6 +6,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pipelines)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/utility)
 
 set(open3d_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Open3DConfig.cpp
     ${camera_SOURCES}
     ${core_SOURCES}
     ${geometry_SOURCES}
