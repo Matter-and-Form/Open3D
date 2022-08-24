@@ -17,12 +17,6 @@ ASSIMP_FLAGS=(
     -DCMAKE_BUILD_TYPE=Release
     -DASSIMP_BUILD_TESTS=OFF
     -DASSIMP_BUILD_ASSIMP_TOOLS=OFF)
-    
-if [[ ${ARCHITECTURE} == armv7l ]]; then
-    # When compiling on ARM suppress warnings of the type
-    # "parameter passing for argument of type <some type> changed in GCC 7.1"
-    ASSIMP_FLAGS+=(-DCMAKE_CXX_FLAGS='-Wno-psabi')
-fi
 
 # Skip if the library is already installed
 FindLibrary ${ASSIMP_INSTALL_PATH} Assimp

@@ -3,10 +3,7 @@
 SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
 
 # Build all Open3D dependencies whose apt version is incorrect.
-${SCRIPT_PATH}/build-assimp
-${SCRIPT_PATH}/build-eigen
-${SCRIPT_PATH}/build-jsoncpp
-${SCRIPT_PATH}/build-qhull
+${SCRIPT_PATH}/build-dependencies
 
 # Build Open3D
 ${SCRIPT_PATH}/build-open3d
