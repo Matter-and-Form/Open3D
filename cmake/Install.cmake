@@ -45,8 +45,6 @@ install(EXPORT ${LIBRARY_NAME}Targets
    DESTINATION ${LIBRARY_CMAKE_DIR})
 
 # Install public API
-set(open3d_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cpp/open3d)
-set(open3d_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/cpp/open3d)
 
 # Install the top-level header files
 install(FILES 
