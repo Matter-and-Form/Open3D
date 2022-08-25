@@ -13,7 +13,7 @@ packages=(
     # Assimp
     zlib1g-dev
     # Open3D
-    libfmt-dev libtbb-dev libjpeg-dev libpng-dev liblzf-dev libopenblas-dev liblapacke-dev)
+    libfmt-dev libtbb-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev)
 
 # Install required packages
 InstallPackages ${packages[@]}

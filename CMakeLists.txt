@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 3.12.0)
 
 # Check operating system.  Only Linux is supported 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL Linux)
@@ -53,11 +53,15 @@ find_package(Qhull 8.0 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/qhull NO_DEFAU
 # Apt packages
 # If any of these packages do not exist, run 'scripts/install-required-packages' before running cmake.
 find_package(fmt REQUIRED)
-find_package(TBB REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
-find_package(liblzf REQUIRED)
 find_package(BLAS REQUIRED)
+
+#find_package(TBB REQUIRED)
+#if (NOT TBB_FOUND)
+    # TBBConfig.cmake may not be preset depending on the OS.  Set the target manually.
+    
+#endif()
 
 # Add subdirectories
 add_subdirectory(cpp/open3d)
@@ -85,13 +89,12 @@ target_link_libraries(${LIBRARY_NAME}
     stdc++fs
     # Apt packages
     fmt::fmt
-    TBB::tbb
+    #TBB::tbb
+    tbb
     JPEG::JPEG
     PNG::PNG
-    liblzf::liblzf
     openblas
     lapacke
-    
     # Built static libraries
     JsonCpp::JsonCpp
     Qhull::qhullcpp

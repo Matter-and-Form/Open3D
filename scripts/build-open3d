@@ -8,7 +8,7 @@ source ${SCRIPT_PATH}/common
 OPEN3D_SOURCE_PATH="$(realpath ${SCRIPT_PATH}/..)"
 OPEN3D_BUILD_PATH=${OPEN3D_SOURCE_PATH}/build
 OPEN3D_INSTALL_PATH=${OPEN3D_SOURCE_PATH}/install
-OPEN3D_DEPENDENCIES="libfmt-dev libtbb-dev libjpeg-dev libpng-dev liblzf-dev libopenblas-dev liblapacke-dev"
+OPEN3D_DEPENDENCIES="libfmt-dev libtbb-dev libjpeg-dev libpng-dev libopenblas-dev liblapacke-dev"
 OPEN3D_FLAGS=(
     -DCMAKE_INSTALL_PREFIX=${OPEN3D_INSTALL_PATH}
     -DCMAKE_BUILD_TYPE=Release)

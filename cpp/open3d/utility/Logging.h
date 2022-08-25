@@ -100,9 +100,18 @@
 //
 // Usage  : utility::LogDebug(format_string, arg0, arg1, ...);
 // Example: utility::LogDebug("name: {}, age: {}", "dog", 5);
+#ifdef __arm__
+namespace open3d {
+namespace utility {
+inline void DoNothing(){}
+}
+}
+#define LogDebug(...) DoNothing()
+#else
 #define LogDebug(...)                     \
     Logger::LogDebug_(__FILE__, __LINE__, \
                       static_cast<const char *>(OPEN3D_FUNCTION), __VA_ARGS__)
+#endif
 
 namespace open3d {
 namespace utility {

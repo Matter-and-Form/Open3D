@@ -29,8 +29,12 @@
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_scan.h>
 
+#if ((TBB_INTERFACE_VERSION >= 10000) && (!defined __arm__))
+#define OPEN3D_USE_STD_EXECUTION
+#endif
+
 // clang-format off
-#if TBB_INTERFACE_VERSION >= 10000
+#ifdef OPEN3D_USE_STD_EXECUTION
     #ifdef OPEN3D_USE_ONEAPI_PACKAGES
         #include <oneapi/dpl/execution>
         #include <oneapi/dpl/numeric>
@@ -88,7 +92,7 @@ public:
 
 template <class Tin, class Tout>
 void InclusivePrefixSum(const Tin* first, const Tin* last, Tout* out) {
-#if TBB_INTERFACE_VERSION >= 10000
+#ifdef OPEN3D_USE_STD_EXECUTION
     // use parallelstl if we have TBB 2018 or later
 #ifdef OPEN3D_USE_ONEAPI_PACKAGES
     std::inclusive_scan(oneapi::dpl::execution::par_unseq, first, last, out);

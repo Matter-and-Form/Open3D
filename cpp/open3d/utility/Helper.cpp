@@ -26,7 +26,15 @@
 
 #include "open3d/utility/Helper.h"
 
+#ifndef __arm__
+#define OPEN3D_USE_FMT_CHRONO
+#endif
+
+#ifdef OPEN3D_USE_FMT_CHRONO
 #include <fmt/chrono.h>
+#else
+#include <ctime>
+#endif
 
 #include <algorithm>
 #include <cctype>
@@ -144,8 +152,20 @@ void Sleep(int milliseconds) {
 }
 
 std::string GetCurrentTimeStamp() {
+#ifdef OPEN3D_USE_FMT_CHRONO
     std::time_t t = std::time(nullptr);
     return fmt::format("{:%Y-%m-%d-%H-%M-%S}", *std::localtime(&t));
+#else
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,sizeof(buffer),"{:%Y-%m-%d-%H-%M-%S}",timeinfo);
+    return std::string(buffer);
+#endif
 }
 
 }  // namespace utility
