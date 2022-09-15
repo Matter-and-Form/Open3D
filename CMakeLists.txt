@@ -57,12 +57,6 @@ find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(BLAS REQUIRED)
 
-#find_package(TBB REQUIRED)
-#if (NOT TBB_FOUND)
-    # TBBConfig.cmake may not be preset depending on the OS.  Set the target manually.
-    
-#endif()
-
 # Add subdirectories
 add_subdirectory(cpp/open3d)
 add_subdirectory(submodules)
