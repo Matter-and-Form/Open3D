@@ -44,19 +44,18 @@ For more, please visit the [Open3D documentation](http://www.open3d.org/docs).
 
 ## A Minimum Build
 
-This fork of the <a href="https://github.com/isl-org/Open3D">Open3D repository</a> provides 
-a lightweight build of the Open3D library.  This build includes only the core computational
-modules and excludes the machine learning and visualization modules.
+This fork provides a minimal build of the <a href="https://github.com/isl-org/Open3D">Open3D library</a>.
+This build includes only the core computational modules and excludes the machine learning and visualization modules.
 
 ## Build Instructions
 
-1. After first cloning the repository, intialize and update the third party submodules:
+1. After first cloning the repository, initialize and update the third party submodules:
 ```
 git submodule update --init --recursive
 
 ```
 
-2. Run the build script to build Open3D dependencies and Open3D.
+2. Run the build script to build Open3D and its dependencies.
 ```
 scripts/build-all
 
