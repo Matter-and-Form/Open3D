@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.12.0)
 
-# Check operating system.  Only Linux is supported 
-if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL Linux)
-    message(FATAL_ERROR "Operating system ${CMAKE_SYSTEM_NAME} is not supported.")
-endif()
-
 project(Open3D VERSION 0.15.2 DESCRIPTION "Open3D Library.")
 
 # Set C++ standard
@@ -39,11 +34,10 @@ if (NOT EXISTS "${OPEN3D_DEPENDENCIES_PATH}")
     message(FATAL_ERROR "The Open3D dependencies path [${OPEN3D_DEPENDENCIES_PATH}] does not exist.  Run 'scripts/build-dependencies' to build the dependencies and run cmake again.")
 endif()
 
-
 # Find dependency packages
 
 # Built shared libraries
-find_package(assimp 5.1 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/assimp NO_DEFAULT_PATH)
+find_package(assimp REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/assimp NO_DEFAULT_PATH)
 find_package(Eigen3 3.4 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/eigen NO_DEFAULT_PATH)
 
 # Built static libraries
@@ -52,10 +46,12 @@ find_package(Qhull 8.0 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/qhull NO_DEFAU
 
 # Apt packages
 # If any of these packages do not exist, run 'scripts/install-required-packages' before running cmake.
+#find_package(Threads REQUIRED)
 find_package(fmt REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(BLAS REQUIRED)
+
 
 # Add subdirectories
 add_subdirectory(cpp/open3d)
@@ -79,7 +75,8 @@ target_include_directories(${LIBRARY_NAME} ${LIBRARY_ACCESS}
 target_link_libraries(${LIBRARY_NAME} 
     PRIVATE
     # Standard library
-    pthread
+    #pthread
+    #Threads::Threads
     stdc++fs
     # Apt packages
     fmt::fmt
@@ -110,10 +107,7 @@ target_compile_definitions(${LIBRARY_NAME} ${LIBRARY_ACCESS}
 # Set target compile options
 set(OPEN3D_COMPILE_OPTIONS)
 
-if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL armv7l)
-     # Additional compiler options for armv7l
-     list(APPEND OPEN3D_COMPILE_OPTIONS -Wno-psabi -mcpu=cortex-a72 -mfpu=neon-vfpv4)
-elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL aarch64)
+if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL aarch64)
      # Additional compiler options for aarch64
      list(APPEND OPEN3D_COMPILE_OPTIONS -Wno-psabi)
 endif()

@@ -7,11 +7,11 @@ source ${SCRIPT_PATH}/common
 
 ASSIMP_NAME=assimp
 ASSIMP_URL=https://github.com/assimp/assimp.git
-ASSIMP_BRANCH=v5.1.5
+ASSIMP_BRANCH=master
 ASSIMP_SOURCE_PATH=${COMMON_SOURCE_PATH}/${ASSIMP_NAME}
 ASSIMP_BUILD_PATH=${COMMON_BUILD_PATH}/${ASSIMP_NAME}
 ASSIMP_INSTALL_PATH=${COMMON_INSTALL_PATH}/${ASSIMP_NAME}
-ASSIMP_DEPENDENCIES="zlib1g-dev"
+#ASSIMP_DEPENDENCIES="zlib1g-dev"
 ASSIMP_FLAGS=(
     -DCMAKE_INSTALL_PREFIX=${ASSIMP_INSTALL_PATH}
     -DCMAKE_BUILD_TYPE=Release
@@ -30,7 +30,7 @@ echo "*                      Build Assimp                         *"
 echo "*************************************************************"
 echo ""
 
-InstallPackages ${COMMON_REQUIRED_PACKAGES} ${ASSIMP_DEPENDENCIES}
+#InstallPackages ${ASSIMP_DEPENDENCIES}
 GitClone ${ASSIMP_SOURCE_PATH} ${ASSIMP_URL} ${ASSIMP_BRANCH}
 BuildAndInstall ${ASSIMP_SOURCE_PATH} ${ASSIMP_BUILD_PATH} ${ASSIMP_FLAGS[@]}
 
