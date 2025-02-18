@@ -1,0 +1,40 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+JPEG_NAME=jpeg
+JPEG_URL=https://github.com/libjpeg-turbo/libjpeg-turbo.git
+JPEG_BRANCH=3.1.0
+JPEG_SOURCE_PATH=${COMMON_SOURCE_PATH}/${JPEG_NAME}
+JPEG_BUILD_PATH=${COMMON_BUILD_PATH}/${JPEG_NAME}
+JPEG_INSTALL_PATH=${COMMON_INSTALL_PATH}/${JPEG_NAME}
+JPEG_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${JPEG_INSTALL_PATH}
+    -DCMAKE_BUILD_TYPE=Release
+    -DENABLE_STATIC=ON
+    -DENABLE_SHARED=OFF
+    -DWITH_SIMD=ON)
+
+# Skip if the library is already installed
+FindLibrary ${JPEG_INSTALL_PATH} JPEG
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                      Build JPEG                           *"
+echo "*************************************************************"
+echo ""
+
+GitClone ${JPEG_SOURCE_PATH} ${JPEG_URL} ${JPEG_BRANCH}
+BuildAndInstall ${JPEG_SOURCE_PATH} ${JPEG_BUILD_PATH} ${JPEG_FLAGS[@]}
+
+echo ""
+echo "*************************************************************"
+echo "*                  Build JPEG successful                    *"
+echo "*************************************************************"
+echo ""

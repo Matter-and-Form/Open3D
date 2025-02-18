@@ -39,7 +39,7 @@
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #elif _WIN32
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 #include "open3d/utility/Helper.h"

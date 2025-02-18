@@ -1,0 +1,38 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+ZLIB_NAME=zlib
+ZLIB_URL=https://github.com/madler/zlib.git
+ZLIB_BRANCH=v1.3.1
+ZLIB_SOURCE_PATH=${COMMON_SOURCE_PATH}/${ZLIB_NAME}
+ZLIB_BUILD_PATH=${COMMON_BUILD_PATH}/${ZLIB_NAME}
+ZLIB_INSTALL_PATH=${COMMON_INSTALL_PATH}/${ZLIB_NAME}
+ZLIB_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${ZLIB_INSTALL_PATH}
+    -DCMAKE_BUILD_TYPE=Release
+    -DZLIB_BUILD_EXAMPLES=OFF)
+
+# Skip if the library is already installed
+FindLibrary ${ZLIB_INSTALL_PATH} ZLIB
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                      Build ZLIB                           *"
+echo "*************************************************************"
+echo ""
+
+GitClone ${ZLIB_SOURCE_PATH} ${ZLIB_URL} ${ZLIB_BRANCH}
+BuildAndInstall ${ZLIB_SOURCE_PATH} ${ZLIB_BUILD_PATH} ${ZLIB_FLAGS[@]}
+
+echo ""
+echo "*************************************************************"
+echo "*                  Build ZLIB successful                    *"
+echo "*************************************************************"
+echo ""

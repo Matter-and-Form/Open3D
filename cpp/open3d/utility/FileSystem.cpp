@@ -32,9 +32,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
+#include <filesystem>
 #ifdef WIN32
 #include <direct.h>
-#include <dirent/dirent.h>
+//#include <dirent/dirent.h>
+#include <dirent.h>
 #include <io.h>
 #include <windows.h>
 #ifndef PATH_MAX
@@ -246,11 +248,7 @@ bool DirectoryExists(const std::string &directory) {
 }
 
 bool MakeDirectory(const std::string &directory) {
-#ifdef WINDOWS
-    return (_mkdir(directory.c_str()) == 0);
-#else
-    return (mkdir(directory.c_str(), S_IRWXU) == 0);
-#endif
+    return std::filesystem::create_directories(directory);
 }
 
 bool MakeDirectoryHierarchy(const std::string &directory) {
@@ -308,27 +306,32 @@ bool ListDirectory(const std::string &directory,
     if (directory.empty()) {
         return false;
     }
-    DIR *dir;
-    struct dirent *ent;
-    struct stat st;
-    dir = opendir(directory.c_str());
-    if (!dir) {
+    
+    try
+    {
+        for (const auto& entry : std::filesystem::directory_iterator(directory))
+        {
+            if (std::filesystem::is_directory(entry.status()))
+            {
+                subdirs.push_back(entry.path().string());
+            }
+            else if (std::filesystem::is_regular_file(entry.status()))
+            {
+                filenames.push_back(entry.path().string());
+            }
+        }
+        return true;
+    }
+    catch (const std::filesystem::filesystem_error& e)
+    {
+        // std::cerr << "Filesystem error: " << e.what() << std::endl;
         return false;
     }
-    filenames.clear();
-    while ((ent = readdir(dir)) != NULL) {
-        const std::string file_name = ent->d_name;
-        if (file_name[0] == '.') continue;
-        std::string full_file_name =
-                GetRegularizedDirectoryName(directory) + file_name;
-        if (stat(full_file_name.c_str(), &st) == -1) continue;
-        if (S_ISDIR(st.st_mode))
-            subdirs.push_back(full_file_name);
-        else if (S_ISREG(st.st_mode))
-            filenames.push_back(full_file_name);
+    catch (const std::exception& e)
+    {
+        // std::cerr << "General error: " << e.what() << std::endl;
+        return false;
     }
-    closedir(dir);
-    return true;
 }
 
 bool ListFilesInDirectory(const std::string &directory,

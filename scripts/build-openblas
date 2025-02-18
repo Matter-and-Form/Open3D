@@ -1,0 +1,38 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+OPENBLAS_NAME=openblas
+OPENBLAS_URL=https://github.com/OpenMathLib/OpenBLAS.git
+OPENBLAS_BRANCH=v0.3.29
+OPENBLAS_SOURCE_PATH=${COMMON_SOURCE_PATH}/${OPENBLAS_NAME}
+OPENBLAS_BUILD_PATH=${COMMON_BUILD_PATH}/${OPENBLAS_NAME}
+OPENBLAS_INSTALL_PATH=${COMMON_INSTALL_PATH}/${OPENBLAS_NAME}
+OPENBLAS_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${OPENBLAS_INSTALL_PATH}
+    -DCMAKE_BUILD_TYPE=Release
+    -DTARGET=${DCMAKE_SYSTEM_PROCESSOR})
+
+# Skip if the library is already installed
+FindLibrary ${OPENBLAS_INSTALL_PATH} ${OPENBLAS_NAME}
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                     Build OpenBLAS                        *"
+echo "*************************************************************"
+echo ""
+
+GitClone ${OPENBLAS_SOURCE_PATH} ${OPENBLAS_URL} ${OPENBLAS_BRANCH}
+BuildAndInstall ${OPENBLAS_SOURCE_PATH} ${OPENBLAS_BUILD_PATH} ${OPENBLAS_FLAGS[@]}
+
+echo ""
+echo "*************************************************************"
+echo "*                Build OpenBLAS successful                  *"
+echo "*************************************************************"
+echo ""

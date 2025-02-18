@@ -24,7 +24,7 @@ else()
     set(LIBRARY_ACCESS PRIVATE)
 endif()
 
-# Set the path for Open3D depencencies
+# Set the path for Open3D dependencies
 set(OPEN3D_DEPENDENCIES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/install)
 
 # Check if the dependencies path exists.
@@ -36,6 +36,14 @@ endif()
 
 # Find dependency packages
 
+set(ZLIB_INCLUDE_DIR ${OPEN3D_DEPENDENCIES_PATH}/zlib)
+set(ZLIB_LIBRARY ${OPEN3D_DEPENDENCIES_PATH}/zlib/lib/libzlibstatic.a)
+
+# set(TBB_INCLUDE_DIR ${OPEN3D_DEPENDENCIES_PATH}/tbb/include)
+# set(TBB_LIBRARIES ${OPEN3D_DEPENDENCIES_PATH}/tbb/lib/libtbb_static.a)
+
+find_package(OpenMP REQUIRED)
+
 # Built shared libraries
 find_package(assimp REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/assimp NO_DEFAULT_PATH)
 find_package(Eigen3 3.4 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/eigen NO_DEFAULT_PATH)
@@ -43,14 +51,20 @@ find_package(Eigen3 3.4 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/eigen NO_DEFA
 # Built static libraries
 find_package(jsoncpp 1.5 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/jsoncpp NO_DEFAULT_PATH)
 find_package(Qhull 8.0 REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/qhull NO_DEFAULT_PATH)
+find_package(fmt REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/fmt NO_DEFAULT_PATH)
+find_package(libjpeg-turbo REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/jpeg NO_DEFAULT_PATH)
+#find_package(zlib REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/zlib NO_DEFAULT_PATH)
+find_package(PNG REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/png NO_DEFAULT_PATH)
+find_package(TBB REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/tbb NO_DEFAULT_PATH)
+find_package(OpenBLAS REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/openblas NO_DEFAULT_PATH)
+#find_package(lapacke REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/lapacke NO_DEFAULT_PATH)
+#find_package(cblas REQUIRED PATHS ${OPEN3D_DEPENDENCIES_PATH}/lapacke NO_DEFAULT_PATH)
 
 # Apt packages
 # If any of these packages do not exist, run 'scripts/install-required-packages' before running cmake.
 #find_package(Threads REQUIRED)
-find_package(fmt REQUIRED)
-find_package(JPEG REQUIRED)
-find_package(PNG REQUIRED)
-find_package(BLAS REQUIRED)
+
+#find_package(BLAS REQUIRED)
 
 
 # Add subdirectories
@@ -69,31 +83,38 @@ target_include_directories(${LIBRARY_NAME} ${LIBRARY_ACCESS}
     ${CMAKE_CURRENT_SOURCE_DIR}/cpp
     ${CMAKE_CURRENT_BINARY_DIR}/cpp
     ${submodules_INCLUDE_DIRS}
-    ${3rdparty_INCLUDE_DIRS})
+    ${3rdparty_INCLUDE_DIRS}
+    #${TBB_INCLUDE_DIR}
+    /usr/x86_64-w64-mingw32/include)
 
 # Set target link libraries
 target_link_libraries(${LIBRARY_NAME} 
-    PRIVATE
+    PUBLIC
     # Standard library
     #pthread
     #Threads::Threads
     stdc++fs
     # Apt packages
     fmt::fmt
-    #TBB::tbb
-    tbb
-    JPEG::JPEG
+    TBB::tbb
+    #tbb
+    libjpeg-turbo::turbojpeg-static
     PNG::PNG
-    openblas
-    lapacke
+    #openblas
+    OpenBLAS::OpenBLAS
+    #lapacke
     # Built static libraries
     JsonCpp::JsonCpp
     Qhull::qhullcpp
     Qhull::qhullstatic_r
     # Built shared libraries
-    PUBLIC
+    #PUBLIC
     assimp::assimp
-    Eigen3::Eigen)
+    Eigen3::Eigen
+    #${TBB_LIBRARIES}
+    )
+
+target_link_options(${LIBRARY_NAME} PUBLIC "-static")
 
 # Set target compile defintions
 target_compile_definitions(${LIBRARY_NAME} ${LIBRARY_ACCESS}

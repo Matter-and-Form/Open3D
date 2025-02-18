@@ -29,6 +29,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace open3d {
 namespace utility {

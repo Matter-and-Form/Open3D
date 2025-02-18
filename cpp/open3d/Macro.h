@@ -29,7 +29,7 @@
 #include <cassert>
 
 // https://gcc.gnu.org/wiki/Visibility updated to use C++11 attribute syntax
-#if defined(_WIN32) || defined(__CYGWIN__)
+#if 0 //defined(_WIN32) || defined(__CYGWIN__)
 #define OPEN3D_DLL_IMPORT __declspec(dllimport)
 #define OPEN3D_DLL_EXPORT __declspec(dllexport)
 #define OPEN3D_DLL_LOCAL
@@ -54,7 +54,11 @@
 // Compiler-specific function macro.
 // Ref: https://stackoverflow.com/a/4384825
 #ifdef _WIN32
+#ifdef __FUNCSIG__
 #define OPEN3D_FUNCTION __FUNCSIG__
+#else
+#define OPEN3D_FUNCTION __PRETTY_FUNCTION__
+#endif
 #else
 #define OPEN3D_FUNCTION __PRETTY_FUNCTION__
 #endif

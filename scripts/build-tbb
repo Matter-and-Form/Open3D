@@ -1,0 +1,46 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+TBB_NAME=tbb
+TBB_URL=https://github.com/wjakob/tbb.git
+TBB_BRANCH=master
+TBB_SOURCE_PATH=${COMMON_SOURCE_PATH}/${TBB_NAME}
+TBB_BUILD_PATH=${COMMON_BUILD_PATH}/${TBB_NAME}
+TBB_INSTALL_PATH=${COMMON_INSTALL_PATH}/${TBB_NAME}
+TBB_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${TBB_INSTALL_PATH}
+    -DCMAKE_BUILD_TYPE=Release
+    #-DSTATIC_WINDOWS_RUNTIME=${STATIC_WINDOWS_RUNTIME}
+    -DTBB_BUILD_TBBMALLOC=ON
+    -DTBB_BUILD_TBBMALLOC_PROXYC=OFF
+    -DTBB_BUILD_SHARED=OFF
+    -DTBB_BUILD_STATIC=ON
+    -DTBB_BUILD_TESTS=OFF
+    # -DTBB_INSTALL_ARCHIVE_DIR=${COMMON_INSTALL_PATH}
+    # -DTBB_CMAKE_PACKAGE_INSTALL_DIR=${COMMON_INSTALL_PATH}/cmake/tbb
+        )
+
+# Skip if the library is already installed
+FindLibrary ${TBB_INSTALL_PATH} TBB
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                       Build TBB                           *"
+echo "*************************************************************"
+echo ""
+
+GitClone ${TBB_SOURCE_PATH} ${TBB_URL} ${TBB_BRANCH}
+BuildAndInstall ${TBB_SOURCE_PATH} ${TBB_BUILD_PATH} ${TBB_FLAGS[@]}
+
+echo ""
+echo "*************************************************************"
+echo "*                   Build TBB successful                    *"
+echo "*************************************************************"
+echo ""

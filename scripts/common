@@ -83,6 +83,47 @@ GitClone()
     fi
 }
 
+Build()
+{
+    if [ $# -lt 2 ]; then
+        echo "A source path and a build path are required to build the library."
+        exit 1
+    fi
+
+    SOURCE_PATH=$1
+    BUILD_PATH=$2
+    CMAKE_FLAGS="${@:3} ${CMAKE_CC_FLAGS}"
+
+    # Check the build directory exists and is not empty
+    if [ -d ${BUILD_PATH} ] && [ "$(ls -A ${BUILD_PATH})" ]; then
+        echo ""
+        echo "The build directory ${BUILD_PATH} already exists."
+        read -p "Do you want to remove it for a clean rebuild? (y/n) " CHOICE
+        if [[ ${CHOICE} == 'y' ]]; then
+            echo "rm -rf ${BUILD_PATH}"
+            rm -rf ${BUILD_PATH}
+        fi
+    fi
+
+    NUMBER_OF_CORES=$(grep -c processor /proc/cpuinfo)
+    CMAKE_CONFIGURE="cmake -H${SOURCE_PATH} -B${BUILD_PATH} ${CMAKE_FLAGS}"
+    CMAKE_BUILD_INSTALL="cmake --build ${BUILD_PATH} -j ${NUMBER_OF_CORES}"
+
+    echo $CMAKE_CONFIGURE
+    ${CMAKE_CONFIGURE}
+    if [ $? -ne 0 ]; then
+        #echo "CMake configuration failed."
+        exit 1
+    fi
+
+    echo $CMAKE_BUILD_INSTALL
+    ${CMAKE_BUILD_INSTALL}
+    if [ $? -ne 0 ]; then
+        #echo "Cmake build and install failed."
+        exit 1
+    fi
+}
+
 BuildAndInstall()
 {
     if [ $# -lt 2 ]; then

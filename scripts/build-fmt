@@ -1,0 +1,40 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+FMT_NAME=fmt
+FMT_URL=https://github.com/fmtlib/fmt.git
+FMT_BRANCH=11.1.3
+FMT_SOURCE_PATH=${COMMON_SOURCE_PATH}/${FMT_NAME}
+FMT_BUILD_PATH=${COMMON_BUILD_PATH}/${FMT_NAME}
+FMT_INSTALL_PATH=${COMMON_INSTALL_PATH}/${FMT_NAME}
+FMT_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${FMT_INSTALL_PATH}
+    -DCMAKE_BUILD_TYPE=Release
+    -DFMT_DOC=OFF
+    -DFMT_TEST=OFF
+    -DFMT_FUZZ=OFF)
+
+# Skip if the library is already installed
+FindLibrary ${FMT_INSTALL_PATH} FMT
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                       Build FMT                           *"
+echo "*************************************************************"
+echo ""
+
+GitClone ${FMT_SOURCE_PATH} ${FMT_URL} ${FMT_BRANCH}
+BuildAndInstall ${FMT_SOURCE_PATH} ${FMT_BUILD_PATH} ${FMT_FLAGS[@]}
+
+echo ""
+echo "*************************************************************"
+echo "*                   Build FMT successful                    *"
+echo "*************************************************************"
+echo ""

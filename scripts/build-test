@@ -1,0 +1,36 @@
+#!/bin/bash
+
+SCRIPT_PATH="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+
+# Get source, build and install directories and common functions.
+source ${SCRIPT_PATH}/common
+
+TEST_NAME=open3d-test
+TEST_URL=https://github.com/fmtlib/fmt.git
+TEST_BRANCH=11.1.3
+TEST_SOURCE_PATH="$(realpath ${SCRIPT_PATH}/../test)"
+TEST_BUILD_PATH=${TEST_SOURCE_PATH}/build
+TEST_INSTALL_PATH=${TEST_SOURCE_PATH}/install
+TEST_FLAGS=(
+    -DCMAKE_INSTALL_PREFIX=${TEST_INSTALL_PATH}
+    -DCMAKE_BUILD_TYPE=Release)
+
+# Skip if the library is already installed
+FindLibrary ${TEST_INSTALL_PATH} ${TEST_NAME}
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+echo ""
+echo "*************************************************************"
+echo "*                       Build test                          *"
+echo "*************************************************************"
+echo ""
+
+Build ${TEST_SOURCE_PATH} ${TEST_BUILD_PATH} ${TEST_FLAGS[@]}
+
+echo ""
+echo "*************************************************************"
+echo "*                  Build test successful                    *"
+echo "*************************************************************"
+echo ""

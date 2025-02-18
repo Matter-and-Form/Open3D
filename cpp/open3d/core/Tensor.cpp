@@ -1770,8 +1770,7 @@ Tensor Tensor::FromDLPack(const DLManagedTensor* src) {
             device = Device("CUDA", src->dl_tensor.ctx.device_id);
             break;
         default:
-            utility::LogError("Unsupported device_type {}",
-                              src->dl_tensor.ctx.device_type);
+            utility::LogError("Unsupported tensor device type");
     }
 
     Dtype dtype = DLDataTypeToDtype(src->dl_tensor.dtype);
